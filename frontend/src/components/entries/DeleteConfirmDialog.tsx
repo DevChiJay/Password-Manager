@@ -34,7 +34,7 @@ export default function DeleteConfirmDialog({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-600" />

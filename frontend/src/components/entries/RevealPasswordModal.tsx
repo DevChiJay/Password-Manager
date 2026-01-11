@@ -86,7 +86,7 @@ export default function RevealPasswordModal({ isOpen, onClose, entryId }: Reveal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg bg-white">
         <DialogHeader>
           <DialogTitle>
             {revealedData?.website_name || 'Password Details'}
