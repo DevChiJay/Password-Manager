@@ -34,6 +34,41 @@ export const refreshToken = async (): Promise<TokenResponse> => {
 }
 
 /**
+ * Verify email with token
+ */
+export const verifyEmail = async (token: string): Promise<{ message: string }> => {
+  const response = await apiClient.get<{ message: string }>(`/auth/verify-email?token=${token}`)
+  return response.data
+}
+
+/**
+ * Request password reset email
+ */
+export const forgotPassword = async (email: string): Promise<{ message: string }> => {
+  const response = await apiClient.post<{ message: string }>('/auth/forgot-password', { email })
+  return response.data
+}
+
+/**
+ * Reset password with token
+ */
+export const resetPassword = async (token: string, newPassword: string): Promise<{ message: string }> => {
+  const response = await apiClient.post<{ message: string }>('/auth/reset-password', {
+    token,
+    new_password: newPassword
+  })
+  return response.data
+}
+
+/**
+ * Resend verification email
+ */
+export const resendVerification = async (email: string): Promise<{ message: string }> => {
+  const response = await apiClient.post<{ message: string }>('/auth/resend-verification', { email })
+  return response.data
+}
+
+/**
  * Logout user (client-side only - clear local storage)
  */
 export const logout = (): void => {

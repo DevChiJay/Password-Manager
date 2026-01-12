@@ -1,14 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Lock, Mail, KeyRound } from 'lucide-react'
-import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import ResendVerificationAlert from '@/components/auth/ResendVerificationAlert'
 import { useLogin, useIsAuthenticated } from '@/hooks/useAuth'
 import { loginSchema, type LoginFormData } from '@/schemas/auth.schema'
 
@@ -17,14 +17,19 @@ export default function LoginPage() {
   const isAuthenticated = useIsAuthenticated()
   const login = useLogin()
   const [showPassword, setShowPassword] = useState(false)
+  const [showVerificationAlert, setShowVerificationAlert] = useState(false)
+  const [emailForVerification, setEmailForVerification] = useState('')
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
+
+  const email = watch('email', '')
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -33,7 +38,21 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, navigate])
 
+  // Check for verification error
+  useEffect(() => {
+    if (login.isError && login.error) {
+      const errorMessage = (login.error as any)?.response?.data?.detail || ''
+      if (errorMessage.toLowerCase().includes('verify')) {
+        setShowVerificationAlert(true)
+        setEmailForVerification(email)
+      } else {
+        setShowVerificationAlert(false)
+      }
+    }
+  }, [login.isError, login.error, email])
+
   const onSubmit = (data: LoginFormData) => {
+    setShowVerificationAlert(false)
     login.mutate(data)
   }
 
@@ -54,6 +73,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
+            {/* Verification Alert */}
+            {showVerificationAlert && emailForVerification && (
+              <ResendVerificationAlert email={emailForVerification} />
+            )}
+
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -75,7 +99,15 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input

@@ -11,7 +11,7 @@ export const createEntrySchema = z.object({
   
   website_url: z
     .string()
-    .url('Please enter a valid URL')
+    .max(500, 'URL is too long')
     .optional()
     .or(z.literal('')),
   
@@ -22,8 +22,8 @@ export const createEntrySchema = z.object({
   
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password is too long'),
+    .min(3, 'Password must be at least 3 characters')
+    .max(250, 'Password is too long'),
   
   notes: z
     .string()
@@ -44,7 +44,7 @@ export const updateEntrySchema = z.object({
   
   website_url: z
     .string()
-    .url('Please enter a valid URL')
+    .max(500, 'URL is too long')
     .optional()
     .or(z.literal('')),
   
@@ -56,8 +56,8 @@ export const updateEntrySchema = z.object({
   
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password is too long')
+    .min(3, 'Password must be at least 3 characters')
+    .max(250, 'Password is too long')
     .optional()
     .or(z.literal('')),
   

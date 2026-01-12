@@ -36,10 +36,20 @@ export const useLogin = () => {
         toast.error('Failed to fetch user data')
       }
     },
-    onError: (error: ApiError) => {
-      toast.error('Login failed', {
-        description: error.message || 'Invalid email or password',
-      })
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Invalid email or password'
+      
+      // Check if it's an email verification error
+      if (errorMessage.toLowerCase().includes('verify')) {
+        toast.error('Email not verified', {
+          description: errorMessage,
+          duration: 6000,
+        })
+      } else {
+        toast.error('Login failed', {
+          description: errorMessage,
+        })
+      }
     },
   })
 }
@@ -48,19 +58,17 @@ export const useLogin = () => {
  * Hook for register mutation
  */
 export const useRegister = () => {
-  const login = useLogin()
+  const navigate = useNavigate()
 
   return useMutation({
     mutationFn: (userData: RegisterRequest) => authApi.register(userData),
-    onSuccess: (user, variables) => {
+    onSuccess: () => {
       toast.success('Account created successfully!', {
-        description: `Welcome, ${user.email}`,
+        description: 'Please check your email to verify your account.',
+        duration: 6000,
       })
-      // Auto-login after registration
-      login.mutate({
-        email: variables.email,
-        password: variables.password,
-      })
+      // Don't auto-login - user needs to verify email first
+      navigate('/login')
     },
     onError: (error: ApiError) => {
       toast.error('Registration failed', {
