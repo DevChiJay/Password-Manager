@@ -1,4 +1,5 @@
 frontend/.env
 prompts.md
+*.md
 
 node_modules
