@@ -16,6 +16,12 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof Error && 'isAxiosError' in error) {
     const axiosError = error as AxiosError<ApiError>;
     
+    // Network error (no response received)
+    if (!axiosError.response && axiosError.request) {
+      return 'Unable to connect to server. Please check your internet connection and ensure the backend is running.';
+    }
+    
+    // Server responded with error
     if (axiosError.response?.data?.detail) {
       const detail = axiosError.response.data.detail;
       
@@ -25,9 +31,15 @@ export function getErrorMessage(error: unknown): string {
       }
       
       // Handle string errors
-      return detail;
+      if (typeof detail === 'string') {
+        return detail;
+      }
+      
+      // Handle object errors (convert to string)
+      return JSON.stringify(detail);
     }
     
+    // Fallback to axios message
     if (axiosError.message) {
       return axiosError.message;
     }
@@ -38,8 +50,12 @@ export function getErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  // Unknown error
-  return String(error);
+  // Unknown error - try to stringify
+  try {
+    return typeof error === 'object' ? JSON.stringify(error) : String(error);
+  } catch {
+    return 'An unknown error occurred';
+  }
 }
 
 /**
