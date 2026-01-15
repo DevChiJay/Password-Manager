@@ -2,11 +2,11 @@
  * Unit Tests for Clipboard Utility
  */
 
-import Clipboard from '@react-native-clipboard/clipboard';
+import * as Clipboard from 'expo-clipboard';
 import { copyToClipboard } from '../utils/clipboard';
 
 // Mock the Clipboard module
-jest.mock('@react-native-clipboard/clipboard');
+jest.mock('expo-clipboard');
 
 describe('Clipboard Utility', () => {
   beforeEach(() => {
@@ -17,26 +17,26 @@ describe('Clipboard Utility', () => {
     const testText = 'test password';
     await copyToClipboard(testText);
     
-    expect(Clipboard.setString).toHaveBeenCalledWith(testText);
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith(testText);
   });
 
   it('should handle empty strings', async () => {
     await copyToClipboard('');
     
-    expect(Clipboard.setString).toHaveBeenCalledWith('');
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith('');
   });
 
   it('should handle special characters', async () => {
     const specialText = '!@#$%^&*()_+-=[]{}|;:",.<>?/~`';
     await copyToClipboard(specialText);
     
-    expect(Clipboard.setString).toHaveBeenCalledWith(specialText);
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith(specialText);
   });
 
   it('should handle unicode characters', async () => {
     const unicodeText = '密码 🔐 パスワード';
     await copyToClipboard(unicodeText);
     
-    expect(Clipboard.setString).toHaveBeenCalledWith(unicodeText);
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith(unicodeText);
   });
 });

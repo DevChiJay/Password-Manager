@@ -1,6 +1,6 @@
 /**
  * Vault Dashboard Screen
- * Main screen showing all password entries
+ * Main screen showing all password entries with Phase 3 features
  */
 
 import React, { useState } from 'react';
@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   RefreshControl,
-  ActivityIndicator,
   TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -23,6 +22,10 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { PasswordEntry } from '@/types';
 import { getPasswordStrengthColor } from '@/utils/passwordStrength';
 import { formatDate } from '@/utils/helpers';
+import EmptyState from '@/components/common/EmptyState';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import OfflineBanner from '@/components/common/OfflineBanner';
+import AnimatedCard from '@/components/common/AnimatedCard';
 
 export default function VaultScreen() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export default function VaultScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'website' | 'email'>('website');
   const [page, setPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
   
   const debouncedSearch = useDebounce(searchQuery, 500);
   
@@ -53,73 +57,82 @@ export default function VaultScreen() {
     router.replace('/(auth)/login');
   };
 
-  const renderEntryCard = ({ item }: { item: PasswordEntry }) => (
-    <TouchableOpacity
-      style={styles.entryCard}
-      onPress={() => router.push(`/(main)/entry/${item.entry_id}`)}
-    >
-      <View style={styles.entryHeader}>
-        <View style={styles.entryIcon}>
-          <Ionicons name="globe-outline" size={24} color="#6366f1" />
+  const renderEntryCard = ({ item, index }: { item: PasswordEntry; index: number }) => (
+    <AnimatedCard delay={index * 50}>
+      <TouchableOpacity
+        style={styles.entryCard}
+        onPress={() => router.push(`/(main)/entry/${item.entry_id}`)}
+      >
+        <View style={styles.entryHeader}>
+          <View style={styles.entryIcon}>
+            <Ionicons name="globe-outline" size={24} color="#6366f1" />
+          </View>
+          <View style={styles.entryInfo}>
+            <Text style={styles.entryTitle} numberOfLines={1}>
+              {item.website_name}
+            </Text>
+            <Text style={styles.entryUsername} numberOfLines={1}>
+              {item.login_email_or_username}
+            </Text>
+          </View>
+          <View style={styles.entryMeta}>
+            <View
+              style={[
+                styles.strengthIndicator,
+                { backgroundColor: getPasswordStrengthColor(item.password_strength) },
+              ]}
+            />
+            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+          </View>
         </View>
-        <View style={styles.entryInfo}>
-          <Text style={styles.entryTitle} numberOfLines={1}>
-            {item.website_name}
+        {item.website_url && (
+          <Text style={styles.entryUrl} numberOfLines={1}>
+            {item.website_url}
           </Text>
-          <Text style={styles.entryUsername} numberOfLines={1}>
-            {item.login_email_or_username}
-          </Text>
-        </View>
-        <View style={styles.entryMeta}>
-          <View
-            style={[
-              styles.strengthIndicator,
-              { backgroundColor: getPasswordStrengthColor(item.password_strength) },
-            ]}
-          />
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </View>
-      </View>
-      {item.website_url && (
-        <Text style={styles.entryUrl} numberOfLines={1}>
-          {item.website_url}
+        )}
+        <Text style={styles.entryDate}>
+          Updated {formatDate(item.updated_at)}
         </Text>
-      )}
-      <Text style={styles.entryDate}>
-        Updated {formatDate(item.updated_at)}
-      </Text>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </AnimatedCard>
   );
 
   const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <Ionicons name="shield-outline" size={80} color="#d1d5db" />
-      <Text style={styles.emptyTitle}>No Passwords Yet</Text>
-      <Text style={styles.emptyText}>
-        {debouncedSearch ? 'No entries match your search' : 'Add your first password to get started'}
-      </Text>
-      {!debouncedSearch && (
-        <TouchableOpacity
-          style={styles.emptyButton}
-          onPress={() => router.push('/(main)/entry/new')}
-        >
-          <Text style={styles.emptyButtonText}>Add Password</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    <EmptyState
+      icon="shield-outline"
+      title={debouncedSearch ? "No Matches Found" : "No Passwords Yet"}
+      description={
+        debouncedSearch
+          ? "Try adjusting your search query"
+          : "Add your first password to get started with secVault"
+      }
+      actionLabel={!debouncedSearch ? "Add Password" : undefined}
+      onAction={!debouncedSearch ? () => router.push('/(main)/entry/new') : undefined}
+    />
   );
 
   return (
     <View style={styles.container}>
+      {/* Offline Banner */}
+      <OfflineBanner />
+
       {/* Header */}
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>secVault</Text>
           <Text style={styles.headerSubtitle}>{user?.email}</Text>
         </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Ionicons name="log-out-outline" size={24} color="#ef4444" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            onPress={() => router.push('/(settings)')}
+            style={styles.iconButton}
+          >
+            <Ionicons name="settings-outline" size={24} color="#6b7280" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.iconButton}>
+            <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Search Bar */}
@@ -161,9 +174,7 @@ export default function VaultScreen() {
 
       {/* Entries List */}
       {loading && displayEntries.length === 0 ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#6366f1" />
-        </View>
+        <LoadingSpinner message="Loading your vault..." />
       ) : (
         <FlatList
           data={displayEntries}
@@ -208,6 +219,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
   },
+  headerLeft: {
+    flex: 1,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  iconButton: {
+    padding: 8,
+  },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -220,6 +241,14 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     padding: 8,
+  },
+  toggleTextActive: {
+    color: '#6366f1',
+    fontWeight: '600',
+  },
+  listContent: {
+    padding: 16,
+    flexGrow: 1,
   },
   searchContainer: {
     padding: 16,
@@ -263,14 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
     fontWeight: '500',
-  },
-  toggleTextActive: {
-    color: '#6366f1',
-    fontWeight: '600',
-  },
-  listContent: {
-    padding: 16,
-    flexGrow: 1,
   },
   entryCard: {
     backgroundColor: '#ffffff',
@@ -325,41 +346,6 @@ const styles = StyleSheet.create({
   entryDate: {
     fontSize: 12,
     color: '#9ca3af',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 40,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#6b7280',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  emptyButton: {
-    backgroundColor: '#6366f1',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  emptyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
   },
   fab: {
     position: 'absolute',

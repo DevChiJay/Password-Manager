@@ -87,3 +87,75 @@ export function estimatePasswordStrength(password: string): PasswordStrength {
   if (score <= 6) return 'strong';
   return 'very_strong';
 }
+
+/**
+ * Calculate password strength with score
+ * Returns score (0-100) and strength label
+ */
+export function calculatePasswordStrength(password: string): {
+  score: number;
+  strength: string;
+} {
+  if (!password || password.length === 0) {
+    return { score: 0, strength: 'Very Weak' };
+  }
+
+  let score = 0;
+
+  // Length scoring (0-40 points)
+  if (password.length >= 8) score += 10;
+  if (password.length >= 12) score += 10;
+  if (password.length >= 16) score += 10;
+  if (password.length >= 20) score += 10;
+
+  // Character variety (0-40 points)
+  if (/[a-z]/.test(password)) score += 10;
+  if (/[A-Z]/.test(password)) score += 10;
+  if (/[0-9]/.test(password)) score += 10;
+  if (/[^A-Za-z0-9]/.test(password)) score += 10;
+
+  // Complexity bonus (0-20 points)
+  const uniqueChars = new Set(password).size;
+  const uniqueRatio = uniqueChars / password.length;
+  if (uniqueRatio > 0.6) score += 10;
+  if (password.length > 15) score += 10;
+
+  // Determine strength label
+  let strength: string;
+  if (score < 20) strength = 'Very Weak';
+  else if (score < 40) strength = 'Weak';
+  else if (score < 60) strength = 'Fair';
+  else if (score < 80) strength = 'Good';
+  else strength = 'Very Strong';
+
+  return { score: Math.min(score, 100), strength };
+}
+
+/**
+ * Get password feedback suggestions
+ */
+export function getPasswordFeedback(password: string): string[] {
+  const feedback: string[] = [];
+
+  if (password.length < 8) {
+    feedback.push('Use at least 8 characters');
+  }
+
+  if (!/[a-z]/.test(password)) {
+    feedback.push('Add lowercase letters');
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    feedback.push('Add uppercase letters');
+  }
+
+  if (!/[0-9]/.test(password)) {
+    feedback.push('Add a number');
+  }
+
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    feedback.push('Add a special character');
+  }
+
+  return feedback;
+}

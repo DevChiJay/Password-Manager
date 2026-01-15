@@ -81,3 +81,10 @@ class ClipboardManager {
 }
 
 export const clipboardManager = new ClipboardManager();
+
+/**
+ * Simple copy function for tests
+ */
+export const copyToClipboard = async (text: string): Promise<void> => {
+  await Clipboard.setStringAsync(text);
+};

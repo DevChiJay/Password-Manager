@@ -100,9 +100,15 @@ class ApiClient {
    */
   private async refreshToken(): Promise<string | null> {
     try {
+      const token = await tokenStorage.getToken();
+      if (!token) {
+        // No token to refresh (user not logged in)
+        return null;
+      }
+
       const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {}, {
         headers: {
-          Authorization: `Bearer ${await tokenStorage.getToken()}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -110,7 +116,10 @@ class ApiClient {
       await tokenStorage.saveToken(newToken);
       return newToken;
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      // Only log if it's not a 401 (expected when not logged in)
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
+        console.error('Token refresh failed:', error);
+      }
       return null;
     }
   }

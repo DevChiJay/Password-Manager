@@ -60,9 +60,9 @@ jest.mock('expo-haptics', () => ({
 }));
 
 // Mock Clipboard
-jest.mock('@react-native-clipboard/clipboard', () => ({
-  setString: jest.fn(),
-  getString: jest.fn(() => Promise.resolve('')),
+jest.mock('expo-clipboard', () => ({
+  setStringAsync: jest.fn(() => Promise.resolve()),
+  getStringAsync: jest.fn(() => Promise.resolve('')),
 }));
 
 // Mock react-query
@@ -76,8 +76,14 @@ jest.mock('@tanstack/react-query', () => ({
   })),
 }));
 
+// Mock NetInfo for offline detection
+jest.mock('@react-native-community/netinfo', () => ({
+  fetch: jest.fn(() => Promise.resolve({ isConnected: true })),
+  addEventListener: jest.fn(() => jest.fn()),
+}));
+
 // Silence the warning: Animated: `useNativeDriver` is not supported
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+// This is handled by jest-expo preset, so we don't need to mock it explicitly
 
 // Global test timeout
 jest.setTimeout(10000);
