@@ -107,7 +107,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             <Ionicons name="shield-checkmark" size={64} color="#6366f1" />
           </View>
-          <Text style={styles.title}>Welcome to secVault</Text>
+          <Text style={styles.title}>Welcome to sVault</Text>
           <Text style={styles.subtitle}>Secure password management</Text>
         </View>
 

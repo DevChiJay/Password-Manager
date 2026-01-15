@@ -72,7 +72,7 @@ class ImportService {
       
       let entries: ImportedEntry[];
       
-      // Handle secVault export format
+      // Handle sVault export format
       if (data.entries && Array.isArray(data.entries)) {
         entries = data.entries;
       } 

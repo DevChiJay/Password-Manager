@@ -1,24 +1,24 @@
 {
   "expo": {
-    "name": "secVault",
-    "slug": "secvault",
+    "name": "sVault",
+    "slug": "sVault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "secvault",
+    "scheme": "sVault",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "description": "Secure vault password manager for mobile devices",
     "privacy": "unlisted",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.secvault.app",
+      "bundleIdentifier": "com.sVault.app",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "secVault uses Face ID for secure and convenient access to your password vault."
+        "NSFaceIDUsageDescription": "sVault uses Face ID for secure and convenient access to your password vault."
       }
     },
     "android": {
-      "package": "com.secvault.app",
+      "package": "com.sVault.app",
       "permissions": [
         "USE_BIOMETRIC",
         "USE_FINGERPRINT"

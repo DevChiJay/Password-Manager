@@ -1,5 +1,5 @@
 /**
- * secVault Spacing System
+ * sVault Spacing System
  * Consistent spacing scale (8pt grid system)
  */
 

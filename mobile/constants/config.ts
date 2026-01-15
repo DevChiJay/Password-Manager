@@ -20,11 +20,11 @@ export const API_BASE_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.API_VERSION}`;
 // Security Configuration
 export const SECURITY_CONFIG = {
   // Token storage
-  TOKEN_STORAGE_KEY: 'secvault_auth_token',
-  REFRESH_TOKEN_KEY: 'secvault_refresh_token',
+  TOKEN_STORAGE_KEY: 'sVault_auth_token',
+  REFRESH_TOKEN_KEY: 'sVault_refresh_token',
   
   // Biometric settings
-  BIOMETRIC_ENABLED_KEY: 'secvault_biometric_enabled',
+  BIOMETRIC_ENABLED_KEY: 'sVault_biometric_enabled',
   
   // Auto-lock settings
   AUTO_LOCK_TIMEOUT: 300000, // 5 minutes in milliseconds
@@ -44,7 +44,7 @@ export const SECURITY_CONFIG = {
 
 // App Configuration
 export const APP_CONFIG = {
-  APP_NAME: 'secVault',
+  APP_NAME: 'sVault',
   APP_VERSION: '1.0.0',
   
   // Pagination
@@ -58,7 +58,7 @@ export const APP_CONFIG = {
 
 // Deep linking configuration
 export const DEEP_LINK_CONFIG = {
-  SCHEME: 'secvault',
+  SCHEME: 'sVault',
   VERIFY_EMAIL_PATH: 'verify-email',
   RESET_PASSWORD_PATH: 'reset-password',
 } as const;

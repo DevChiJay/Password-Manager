@@ -300,7 +300,7 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>secVault - Secure Password Manager</Text>
+        <Text style={styles.footerText}>sVault - Secure Password Manager</Text>
         <Text style={styles.footerText}>© 2026 All rights reserved</Text>
       </View>
     </ScrollView>
