@@ -1,5 +1,9 @@
-frontend/.env
-prompts.md
-*.md
+.env
 
 node_modules
+
+# Markdown info files
+prompts.md
+BUILD-STEPS.md
+STANDARD-IMPLEMENTATION-FOR-NEW-APPS.md
+SECVAULT_DEVELOPMENT_PLAN.md
