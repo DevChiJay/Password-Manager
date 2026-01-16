@@ -72,7 +72,7 @@ class ImportService {
       
       let entries: ImportedEntry[];
       
-      // Handle sVault export format
+      // Handle Svault export format
       if (data.entries && Array.isArray(data.entries)) {
         entries = data.entries;
       } 

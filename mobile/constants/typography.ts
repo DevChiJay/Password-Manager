@@ -1,5 +1,5 @@
 /**
- * sVault Typography System
+ * Svault Typography System
  * Consistent text styles across the app
  */
 

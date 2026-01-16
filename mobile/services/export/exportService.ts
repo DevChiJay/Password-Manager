@@ -35,11 +35,11 @@ class ExportService {
 
       if (format === 'json') {
         content = this.generateJSON(entries, includePasswords);
-        fileName = `sVault_export_${this.getTimestamp()}.json`;
+        fileName = `Svault_export_${this.getTimestamp()}.json`;
         mimeType = 'application/json';
       } else {
         content = this.generateCSV(entries, includePasswords);
-        fileName = `sVault_export_${this.getTimestamp()}.csv`;
+        fileName = `Svault_export_${this.getTimestamp()}.csv`;
         mimeType = 'text/csv';
       }
 

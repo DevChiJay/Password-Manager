@@ -110,7 +110,7 @@ export default function VaultScreen() {
       description={
         debouncedSearch
           ? "Try adjusting your search query"
-          : "Add your first password to get started with sVault"
+          : "Add your first password to get started with Svault"
       }
       actionLabel={!debouncedSearch ? "Add Password" : undefined}
       onAction={!debouncedSearch ? () => router.push('/(main)/entry/new') : undefined}
@@ -131,7 +131,7 @@ export default function VaultScreen() {
               style={styles.headerIcon}
               resizeMode="contain"
             />
-            <Text style={styles.headerTitle}>sVault</Text>
+            <Text style={styles.headerTitle}>Svault</Text>
           </View>
           <Text style={styles.headerSubtitle}>{user?.email}</Text>
         </View>

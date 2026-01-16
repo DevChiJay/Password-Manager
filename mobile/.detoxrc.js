@@ -15,13 +15,13 @@ module.exports = {
   apps: {
     'ios.debug': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/sVault.app',
-      build: 'xcodebuild -workspace ios/sVault.xcworkspace -scheme sVault -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/Svault.app',
+      build: 'xcodebuild -workspace ios/Svault.xcworkspace -scheme Svault -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build',
     },
     'ios.release': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/sVault.app',
-      build: 'xcodebuild -workspace ios/sVault.xcworkspace -scheme sVault -configuration Release -sdk iphonesimulator -derivedDataPath ios/build',
+      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/Svault.app',
+      build: 'xcodebuild -workspace ios/Svault.xcworkspace -scheme Svault -configuration Release -sdk iphonesimulator -derivedDataPath ios/build',
     },
     'android.debug': {
       type: 'android.apk',

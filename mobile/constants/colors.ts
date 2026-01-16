@@ -1,5 +1,5 @@
 /**
- * sVault Color Palette
+ * Svault Color Palette
  * Consistent color system for the entire app
  */
 

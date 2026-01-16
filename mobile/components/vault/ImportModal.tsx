@@ -138,7 +138,7 @@ export default function ImportModal({
                   <View style={styles.instructionsContent}>
                     <Text style={styles.instructionsTitle}>Supported Formats</Text>
                     <Text style={styles.instructionsText}>
-                      • JSON files exported from sVault{'\n'}
+                      • JSON files exported from Svault{'\n'}
                       • CSV files with headers (Website Name, URL, Username/Email, Password, Notes)
                     </Text>
                   </View>

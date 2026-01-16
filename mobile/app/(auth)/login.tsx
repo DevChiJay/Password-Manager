@@ -181,7 +181,7 @@ export default function LoginScreen() {
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.title}>Welcome to sVault</Text>
+          <Text style={styles.title}>Welcome to Svault</Text>
           <Text style={styles.subtitle}>Secure password management</Text>
         </View>
 

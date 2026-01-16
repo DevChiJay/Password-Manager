@@ -40,7 +40,7 @@ export default function Index() {
           // Require biometric authentication before continuing
           const typeName = await biometricService.getBiometricTypeName();
           const authenticated = await biometricService.authenticate(
-            `Use ${typeName} to unlock sVault`
+            `Use ${typeName} to unlock Svault`
           );
           
           if (authenticated) {

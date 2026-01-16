@@ -1,24 +1,24 @@
 {
   "expo": {
-    "name": "sVault",
-    "slug": "svault",
+    "name": "Svault",
+    "slug": "Svault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "sVault",
+    "scheme": "Svault",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "description": "Secure vault password manager for mobile devices",
     "privacy": "unlisted",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sVault.app",
+      "bundleIdentifier": "com.Svault.app",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "sVault uses Face ID for secure and convenient access to your password vault."
+        "NSFaceIDUsageDescription": "Svault uses Face ID for secure and convenient access to your password vault."
       }
     },
     "android": {
-      "package": "com.sVault.app",
+      "package": "com.Svault.app",
       "permissions": [
         "USE_BIOMETRIC",
         "USE_FINGERPRINT"

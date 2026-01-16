@@ -5,7 +5,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CLIPBOARD_TIMEOUT_KEY = 'sVault_clipboard_timeout';
+const CLIPBOARD_TIMEOUT_KEY = 'Svault_clipboard_timeout';
 
 export class SettingsStorage {
   /**
