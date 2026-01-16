@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "sVault",
-    "slug": "sVault",
+    "slug": "svault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -25,8 +25,7 @@
       ],
       "adaptiveIcon": {
         "backgroundColor": "#6366f1",
-        "foregroundImage": "./assets/images/icon.png",
-        "monochromeImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
@@ -56,6 +55,15 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "795d3a8f-5a88-4787-8d8e-17f0ca58a791"
+      }
+    },
+    "owner": "taichijay"
   }
 }
