@@ -16,7 +16,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,6 +36,7 @@ export default function NewEntryScreen() {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<PasswordEntryCreateInput>({
     resolver: zodResolver(passwordEntryCreateSchema),
@@ -47,6 +48,21 @@ export default function NewEntryScreen() {
       notes: '',
     },
   });
+
+  // Reset form whenever screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      reset({
+        website_name: '',
+        website_url: '',
+        login_email_or_username: '',
+        password: '',
+        notes: '',
+      });
+      setShowPassword(false);
+      setShowGenerator(false);
+    }, [reset])
+  );
 
   const onSubmit = async (data: PasswordEntryCreateInput) => {
     try {

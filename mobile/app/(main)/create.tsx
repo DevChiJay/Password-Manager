@@ -4,16 +4,17 @@
  */
 
 import { useEffect } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { View } from 'react-native';
 
 export default function CreateScreen() {
   const router = useRouter();
 
-  useEffect(() => {
-    // Immediately navigate to the new entry screen
+  // Navigate to new entry screen whenever this tab is focused
+  useFocusEffect(() => {
     router.push('/(main)/entry/new');
-  }, []);
+  });
 
-  // This screen just redirects, so return null
-  return null;
+  // Return empty view (screen just redirects)
+  return <View />;
 }
