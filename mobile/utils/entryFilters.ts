@@ -3,8 +3,13 @@
  * Helper functions for filtering and sorting password entries
  */
 
-import { PasswordEntry, PasswordStrength } from '@/types';
-import type { SortOption, FilterOptions } from '@/components/vault/VaultFilters';
+import { PasswordEntry } from '@/types';
+
+export type SortOption = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc' | 'updated-asc' | 'updated-desc';
+
+export interface FilterOptions {
+  dateRange: 'all' | 'week' | 'month' | 'year';
+}
 
 /**
  * Apply filters and sorting to entries
@@ -15,13 +20,6 @@ export function applyFiltersAndSort(
   sort: SortOption
 ): PasswordEntry[] {
   let filtered = [...entries];
-
-  // Apply strength filter
-  if (filters.strengthFilter !== 'all') {
-    filtered = filtered.filter(
-      (entry) => entry.password_strength === filters.strengthFilter
-    );
-  }
 
   // Apply date range filter
   if (filters.dateRange !== 'all') {
@@ -81,17 +79,6 @@ export function sortEntries(
 }
 
 /**
- * Filter entries by strength
- */
-export function filterByStrength(
-  entries: PasswordEntry[],
-  strength: PasswordStrength | 'all'
-): PasswordEntry[] {
-  if (strength === 'all') return entries;
-  return entries.filter((entry) => entry.password_strength === strength);
-}
-
-/**
  * Filter entries by date range
  */
 export function filterByDateRange(
@@ -138,21 +125,14 @@ export function searchEntries(
 }
 
 /**
- * Get entries that need attention (weak, old, or reused passwords)
+ * Get entries that need attention (old or reused passwords)
  */
 export function getEntriesNeedingAttention(
   entries: PasswordEntry[]
 ): {
-  weak: PasswordEntry[];
   old: PasswordEntry[];
   reused: PasswordEntry[];
 } {
-  // Weak passwords
-  const weak = entries.filter(
-    (entry) =>
-      entry.password_strength === 'weak' || entry.password_strength === 'medium'
-  );
-
   // Old passwords (90+ days)
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
@@ -174,7 +154,7 @@ export function getEntriesNeedingAttention(
     .filter((group) => group.length > 1)
     .flat();
 
-  return { weak, old, reused };
+  return { old, reused };
 }
 
 /**
@@ -186,20 +166,9 @@ export function calculateVaultStats(entries: PasswordEntry[]) {
   if (total === 0) {
     return {
       total: 0,
-      weak: 0,
-      medium: 0,
-      strong: 0,
-      veryStrong: 0,
-      weakPercentage: 0,
-      strongPercentage: 0,
       averageAge: 0,
     };
   }
-
-  const weak = entries.filter((e) => e.password_strength === 'weak').length;
-  const medium = entries.filter((e) => e.password_strength === 'medium').length;
-  const strong = entries.filter((e) => e.password_strength === 'strong').length;
-  const veryStrong = entries.filter((e) => e.password_strength === 'very_strong').length;
 
   // Calculate average password age
   const now = Date.now();
@@ -211,12 +180,6 @@ export function calculateVaultStats(entries: PasswordEntry[]) {
 
   return {
     total,
-    weak,
-    medium,
-    strong,
-    veryStrong,
-    weakPercentage: Math.round(((weak + medium) / total) * 100),
-    strongPercentage: Math.round(((strong + veryStrong) / total) * 100),
     averageAge,
   };
 }

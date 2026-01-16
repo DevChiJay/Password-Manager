@@ -1,14 +1,16 @@
 /**
  * Password Strength Utilities
- * Helper functions for password strength analysis
+ * Helper functions for client-side password strength estimation
  */
 
 import { PasswordStrength } from '../types';
 
 /**
- * Get color for password strength
+ * Get color for password strength (for visual indicators during password creation)
  */
-export function getPasswordStrengthColor(strength: PasswordStrength): string {
+export function getPasswordStrengthColor(strength: PasswordStrength | null | undefined): string {
+  if (!strength) return '#9CA3AF'; // gray
+  
   switch (strength) {
     case 'weak':
       return '#EF4444'; // red
@@ -26,7 +28,9 @@ export function getPasswordStrengthColor(strength: PasswordStrength): string {
 /**
  * Get label for password strength
  */
-export function getPasswordStrengthLabel(strength: PasswordStrength): string {
+export function getPasswordStrengthLabel(strength: PasswordStrength | null | undefined): string {
+  if (!strength) return 'Not Analyzed';
+  
   switch (strength) {
     case 'weak':
       return 'Weak';
@@ -37,31 +41,13 @@ export function getPasswordStrengthLabel(strength: PasswordStrength): string {
     case 'very_strong':
       return 'Very Strong';
     default:
-      return 'Unknown';
+      return 'Not Analyzed';
   }
 }
 
 /**
- * Get percentage for password strength meter
- */
-export function getPasswordStrengthPercentage(strength: PasswordStrength): number {
-  switch (strength) {
-    case 'weak':
-      return 25;
-    case 'medium':
-      return 50;
-    case 'strong':
-      return 75;
-    case 'very_strong':
-      return 100;
-    default:
-      return 0;
-  }
-}
-
-/**
- * Local password strength estimation (for client-side feedback)
- * Note: Server provides authoritative strength calculation
+ * Local password strength estimation (for client-side feedback during password creation)
+ * This is only used for immediate visual feedback - the server provides the authoritative strength
  */
 export function estimatePasswordStrength(password: string): PasswordStrength {
   if (password.length < 8) return 'weak';
@@ -89,8 +75,7 @@ export function estimatePasswordStrength(password: string): PasswordStrength {
 }
 
 /**
- * Calculate password strength with score
- * Returns score (0-100) and strength label
+ * Calculate password strength with score (for client-side visual feedback)
  */
 export function calculatePasswordStrength(password: string): {
   score: number;
@@ -100,61 +85,48 @@ export function calculatePasswordStrength(password: string): {
     return { score: 0, strength: 'Very Weak' };
   }
 
-  let score = 0;
+  const estimatedStrength = estimatePasswordStrength(password);
+  const scoreMap = {
+    'weak': 25,
+    'medium': 50,
+    'strong': 75,
+    'very_strong': 100,
+  };
 
-  // Length scoring (0-40 points)
-  if (password.length >= 8) score += 10;
-  if (password.length >= 12) score += 10;
-  if (password.length >= 16) score += 10;
-  if (password.length >= 20) score += 10;
-
-  // Character variety (0-40 points)
-  if (/[a-z]/.test(password)) score += 10;
-  if (/[A-Z]/.test(password)) score += 10;
-  if (/[0-9]/.test(password)) score += 10;
-  if (/[^A-Za-z0-9]/.test(password)) score += 10;
-
-  // Complexity bonus (0-20 points)
-  const uniqueChars = new Set(password).size;
-  const uniqueRatio = uniqueChars / password.length;
-  if (uniqueRatio > 0.6) score += 10;
-  if (password.length > 15) score += 10;
-
-  // Determine strength label
-  let strength: string;
-  if (score < 20) strength = 'Very Weak';
-  else if (score < 40) strength = 'Weak';
-  else if (score < 60) strength = 'Fair';
-  else if (score < 80) strength = 'Good';
-  else strength = 'Very Strong';
-
-  return { score: Math.min(score, 100), strength };
+  return {
+    score: scoreMap[estimatedStrength],
+    strength: getPasswordStrengthLabel(estimatedStrength),
+  };
 }
 
 /**
- * Get password feedback suggestions
+ * Get password strength feedback (for client-side guidance)
  */
 export function getPasswordFeedback(password: string): string[] {
   const feedback: string[] = [];
 
   if (password.length < 8) {
-    feedback.push('Use at least 8 characters');
+    feedback.push('Password should be at least 8 characters long');
   }
 
   if (!/[a-z]/.test(password)) {
-    feedback.push('Add lowercase letters');
+    feedback.push('Include lowercase letters');
   }
 
   if (!/[A-Z]/.test(password)) {
-    feedback.push('Add uppercase letters');
+    feedback.push('Include uppercase letters');
   }
 
   if (!/[0-9]/.test(password)) {
-    feedback.push('Add a number');
+    feedback.push('Include numbers');
   }
 
   if (!/[^A-Za-z0-9]/.test(password)) {
-    feedback.push('Add a special character');
+    feedback.push('Include special characters (!@#$%^&*)');
+  }
+
+  if (password.length >= 12 && feedback.length === 0) {
+    feedback.push('Strong password!');
   }
 
   return feedback;

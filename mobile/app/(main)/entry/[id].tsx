@@ -19,7 +19,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useEntry, useRevealPassword, useEntries } from '@/hooks/useEntries';
 import { clipboardManager } from '@/utils/clipboard';
-import { getPasswordStrengthColor, getPasswordStrengthLabel } from '@/utils/passwordStrength';
 import { formatDate } from '@/utils/helpers';
 import { getErrorMessage } from '@/utils/errorHandling';
 
@@ -141,20 +140,6 @@ export default function EntryDetailScreen() {
           {entry.website_url && (
             <Text style={styles.websiteUrl}>{entry.website_url}</Text>
           )}
-        </View>
-
-        {/* Password Strength */}
-        <View style={styles.strengthSection}>
-          <View
-            style={[
-              styles.strengthBadge,
-              { backgroundColor: getPasswordStrengthColor(entry.password_strength) },
-            ]}
-          >
-            <Text style={styles.strengthText}>
-              {getPasswordStrengthLabel(entry.password_strength)}
-            </Text>
-          </View>
         </View>
 
         {/* Username/Email */}
@@ -285,21 +270,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
     textAlign: 'center',
-  },
-  strengthSection: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  strengthBadge: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-  },
-  strengthText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#ffffff',
-    textTransform: 'uppercase',
   },
   fieldSection: {
     backgroundColor: '#ffffff',

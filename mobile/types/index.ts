@@ -48,7 +48,7 @@ export interface VerifyEmailRequest {
 
 // ==================== Password Entry Types ====================
 
-export type PasswordStrength = 'weak' | 'medium' | 'strong' | 'very_strong';
+export type PasswordStrength = 'weak' | 'medium' | 'strong' | 'very_strong' | null;
 
 export interface PasswordEntry {
   entry_id: string;

@@ -20,7 +20,6 @@ import { useEntries, useSearchEntries } from '@/hooks/useEntries';
 import { useAuth } from '@/hooks/useAuth';
 import { useDebounce } from '@/hooks/useDebounce';
 import { PasswordEntry } from '@/types';
-import { getPasswordStrengthColor } from '@/utils/passwordStrength';
 import { formatDate } from '@/utils/helpers';
 import EmptyState from '@/components/common/EmptyState';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -32,8 +31,6 @@ export default function VaultScreen() {
   const { logout, user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'website' | 'email'>('website');
-  const [page, setPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
   
   const debouncedSearch = useDebounce(searchQuery, 500);
   
@@ -41,13 +38,12 @@ export default function VaultScreen() {
     entries, 
     isLoading, 
     refetch,
-    totalPages,
-  } = useEntries(page);
+  } = useEntries(1);
 
   const {
     entries: searchResults,
     isSearching,
-  } = useSearchEntries(searchType, debouncedSearch, page);
+  } = useSearchEntries(searchType, debouncedSearch, 1);
 
   const displayEntries = debouncedSearch.length > 0 ? searchResults : entries;
   const loading = debouncedSearch.length > 0 ? isSearching : isLoading;
@@ -58,7 +54,7 @@ export default function VaultScreen() {
   };
 
   const renderEntryCard = ({ item, index }: { item: PasswordEntry; index: number }) => (
-    <AnimatedCard delay={index * 50}>
+    <AnimatedCard style={{marginBottom: 16}} delay={index * 50}>
       <TouchableOpacity
         style={styles.entryCard}
         onPress={() => router.push(`/(main)/entry/${item.entry_id}`)}
@@ -75,15 +71,7 @@ export default function VaultScreen() {
               {item.login_email_or_username}
             </Text>
           </View>
-          <View style={styles.entryMeta}>
-            <View
-              style={[
-                styles.strengthIndicator,
-                { backgroundColor: getPasswordStrengthColor(item.password_strength) },
-              ]}
-            />
-            <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-          </View>
+          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
         </View>
         {item.website_url && (
           <Text style={styles.entryUrl} numberOfLines={1}>
@@ -281,9 +269,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   entryHeader: {
     flexDirection: 'row',
@@ -311,16 +303,6 @@ const styles = StyleSheet.create({
   entryUsername: {
     fontSize: 14,
     color: '#6b7280',
-  },
-  entryMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  strengthIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 8,
   },
   entryUrl: {
     fontSize: 12,
