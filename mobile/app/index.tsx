@@ -31,16 +31,37 @@ export default function Index() {
       const hasToken = await tokenStorage.hasToken();
       
       if (hasToken) {
-        // User is authenticated, go to main app
-        router.replace('/(main)/vault');
+        // Check if biometric is enabled
+        const { biometricService } = await import('@/services/biometric');
+        const biometricEnabled = await biometricService.isBiometricLoginEnabled();
+        const biometricAvailable = await biometricService.isAvailable();
+        
+        if (biometricEnabled && biometricAvailable) {
+          // Require biometric authentication before continuing
+          const typeName = await biometricService.getBiometricTypeName();
+          const authenticated = await biometricService.authenticate(
+            `Use ${typeName} to unlock sVault`
+          );
+          
+          if (authenticated) {
+            // Biometric auth successful, go to main app
+            router.replace('/(main)/vault');
+          } else {
+            // Biometric auth failed, go to login
+            router.replace('/(auth)/login');
+          }
+        } else {
+          // No biometric required, go directly to main app
+          router.replace('/(main)/vault');
+        }
       } else {
         // User is not authenticated, go to login
         router.replace('/(auth)/login');
       }
     } catch (error) {
       console.error('Error checking initial route:', error);
-      // Default to onboarding on error
-      router.replace('/onboarding');
+      // Default to login on error
+      router.replace('/(auth)/login');
     }
   };
 

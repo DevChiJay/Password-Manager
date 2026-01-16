@@ -26,12 +26,6 @@ export const SECURITY_CONFIG = {
   // Biometric settings
   BIOMETRIC_ENABLED_KEY: 'sVault_biometric_enabled',
   
-  // Auto-lock settings
-  AUTO_LOCK_TIMEOUT: 300000, // 5 minutes in milliseconds
-  
-  // Clipboard security
-  CLIPBOARD_CLEAR_TIMEOUT: 30000, // 30 seconds
-  
   // Password requirements
   PASSWORD_MIN_LENGTH: 8,
   PASSWORD_MAX_LENGTH: 72,

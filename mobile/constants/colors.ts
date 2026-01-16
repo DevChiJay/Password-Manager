@@ -123,34 +123,3 @@ export const Colors = {
   // Overlay
   overlay: 'rgba(0, 0, 0, 0.5)',
 };
-
-// Dark Mode Colors (for future implementation)
-export const DarkColors = {
-  primary: Colors.primary,
-  success: Colors.success,
-  warning: Colors.warning,
-  error: Colors.error,
-  info: Colors.info,
-
-  background: {
-    primary: '#111827',
-    secondary: '#1F2937',
-    tertiary: '#374151',
-  },
-
-  text: {
-    primary: '#F9FAFB',
-    secondary: '#D1D5DB',
-    tertiary: '#9CA3AF',
-    inverse: '#111827',
-  },
-
-  border: {
-    light: '#374151',
-    medium: '#4B5563',
-    dark: '#6B7280',
-  },
-
-  strength: Colors.strength,
-  overlay: 'rgba(0, 0, 0, 0.7)',
-};

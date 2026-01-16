@@ -147,7 +147,6 @@ export interface AppSettings {
   autoLockTimeout: number;
   clipboardClearTimeout: number;
   biometric: BiometricSettings;
-  theme: 'light' | 'dark' | 'auto';
 }
 
 // ==================== Component Props Types ====================

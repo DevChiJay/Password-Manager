@@ -5,9 +5,25 @@
 
 import * as Clipboard from 'expo-clipboard';
 import { SECURITY_CONFIG } from '../constants/config';
+import { settingsStorage } from '../services/storage/settingsStorage';
 
 class ClipboardManager {
   private clearTimers: Map<string, NodeJS.Timeout> = new Map();
+  private timeoutSeconds: number = 30; // Default timeout
+
+  /**
+   * Set clipboard timeout
+   */
+  setTimeout(seconds: number): void {
+    this.timeoutSeconds = seconds;
+  }
+
+  /**
+   * Get current timeout
+   */
+  getTimeout(): number {
+    return this.timeoutSeconds;
+  }
 
   /**
    * Copy text to clipboard with auto-clear
@@ -16,7 +32,7 @@ class ClipboardManager {
     await Clipboard.setStringAsync(text);
 
     if (autoClear) {
-      this.scheduleAutoClear();
+      await this.scheduleAutoClear();
     }
   }
 
@@ -52,14 +68,18 @@ class ClipboardManager {
   /**
    * Schedule auto-clear of clipboard
    */
-  private scheduleAutoClear(): void {
+  private async scheduleAutoClear(): Promise<void> {
     // Clear any existing timers
     this.clearAllTimers();
+
+    // Get timeout from settings
+    const timeout = await settingsStorage.getClipboardTimeout();
+    const timeoutMs = timeout * 1000;
 
     // Set new timer
     const timer = setTimeout(async () => {
       await this.clear();
-    }, SECURITY_CONFIG.CLIPBOARD_CLEAR_TIMEOUT);
+    }, timeoutMs);
 
     this.clearTimers.set('main', timer);
   }
@@ -70,13 +90,6 @@ class ClipboardManager {
   private clearAllTimers(): void {
     this.clearTimers.forEach((timer) => clearTimeout(timer));
     this.clearTimers.clear();
-  }
-
-  /**
-   * Get remaining time until auto-clear (in seconds)
-   */
-  getRemainingTime(): number {
-    return Math.ceil(SECURITY_CONFIG.CLIPBOARD_CLEAR_TIMEOUT / 1000);
   }
 }
 

@@ -57,7 +57,44 @@ export default function LoginScreen() {
   const onSubmit = async (data: UserLoginInput) => {
     try {
       await login(data);
-      router.replace('/(main)/vault');
+      
+      // Check if we should prompt for biometric setup
+      const available = await biometricService.isAvailable();
+      const enabled = await biometricService.isBiometricLoginEnabled();
+      
+      if (available && !enabled) {
+        // Biometric is available but not enabled, ask user if they want to enable it
+        const typeName = await biometricService.getBiometricTypeName();
+        Alert.alert(
+          'Enable Biometric Login?',
+          `Would you like to use ${typeName} for faster login next time?`,
+          [
+            {
+              text: 'Not Now',
+              style: 'cancel',
+              onPress: () => router.replace('/(main)/vault'),
+            },
+            {
+              text: 'Enable',
+              onPress: async () => {
+                try {
+                  const authenticated = await biometricService.authenticate(
+                    `Enable ${typeName} login`
+                  );
+                  if (authenticated) {
+                    await biometricService.enableBiometricLogin();
+                  }
+                } catch (error) {
+                  console.error('Failed to enable biometric:', error);
+                }
+                router.replace('/(main)/vault');
+              },
+            },
+          ]
+        );
+      } else {
+        router.replace('/(main)/vault');
+      }
     } catch (error) {
       const message = getErrorMessage(error);
       
@@ -87,7 +124,39 @@ export default function LoginScreen() {
       );
 
       if (success) {
-        router.replace('/(main)/vault');
+        // Biometric authentication successful, now verify the stored token
+        const { tokenStorage } = await import('@/services/storage/tokenStorage');
+        const hasToken = await tokenStorage.hasToken();
+        
+        if (!hasToken) {
+          Alert.alert(
+            'No Saved Session',
+            'Please log in with your email and password first to enable biometric login.',
+            [{ text: 'OK' }]
+          );
+          return;
+        }
+
+        // Token exists, trigger a user refresh to validate it
+        const { queryClient } = await import('@/utils/queryClient');
+        const { queryKeys } = await import('@/utils/queryClient');
+        
+        try {
+          // Invalidate and refetch user data to validate the token
+          await queryClient.invalidateQueries({ queryKey: queryKeys.currentUser });
+          await queryClient.refetchQueries({ queryKey: queryKeys.currentUser });
+          
+          // If we get here, token is valid
+          router.replace('/(main)/vault');
+        } catch (error) {
+          // Token is invalid or expired
+          await tokenStorage.clearAll();
+          Alert.alert(
+            'Session Expired',
+            'Your session has expired. Please log in again.',
+            [{ text: 'OK' }]
+          );
+        }
       }
     } catch (error) {
       Alert.alert('Authentication Failed', getErrorMessage(error));

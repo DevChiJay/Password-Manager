@@ -129,4 +129,5 @@ class BiometricService {
   }
 }
 
+export { BiometricService };
 export const biometricService = new BiometricService();
