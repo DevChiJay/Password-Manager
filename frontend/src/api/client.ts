@@ -4,6 +4,13 @@ import type { ApiError } from '@/types'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1/password-manager'
 
+// This will be set from the app initialization
+let clearAuthCallback: (() => void) | null = null
+
+export const setAuthClearCallback = (callback: () => void) => {
+  clearAuthCallback = callback
+}
+
 // Create axios instance
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -66,12 +73,19 @@ apiClient.interceptors.response.use(
           return apiClient(originalRequest)
         }
       } catch (refreshError) {
-        // Refresh failed - clear auth and redirect to login
+        // Refresh failed - clear auth state and redirect to login
         localStorage.removeItem('auth_token')
         localStorage.removeItem('user_data')
         
-        // Only redirect if not already on login page
-        if (window.location.pathname !== '/login') {
+        // Call the auth store clearAuth callback
+        if (clearAuthCallback) {
+          clearAuthCallback()
+        }
+        
+        // Only redirect if not already on auth pages
+        const currentPath = window.location.pathname
+        const authPages = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email']
+        if (!authPages.includes(currentPath)) {
           window.location.href = '/login'
         }
         

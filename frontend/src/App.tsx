@@ -10,14 +10,17 @@ import ResetPasswordPage from '@/pages/ResetPasswordPage'
 import VerifyEmailPage from '@/pages/VerifyEmailPage'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { useAuthStore } from '@/stores/authStore'
+import { setAuthClearCallback } from '@/api/client'
 
 function App() {
-  const { hydrate } = useAuthStore()
+  const { hydrate, clearAuth } = useAuthStore()
 
-  // Hydrate auth state on app load
+  // Hydrate auth state on app load and set up auth clear callback
   useEffect(() => {
     hydrate()
-  }, [hydrate])
+    // Set the callback for API client to use when token expires
+    setAuthClearCallback(clearAuth)
+  }, [hydrate, clearAuth])
 
   return (
     <Router>
